@@ -7,15 +7,16 @@
     body {
       margin: 0;
       height: 100vh;
-      background: #0f0f0f;
       font-family: Arial, sans-serif;
       color: white;
       display: flex;
       align-items: center;
       justify-content: center;
       text-align: center;
+      transition: background 0.5s; /* smooth color change */
     }
 
+    /* Screens */
     .screen {
       display: none;
       width: 100%;
@@ -29,11 +30,13 @@
       display: flex;
     }
 
+    /* Error Image */
     img {
       max-width: 300px;
       margin-bottom: 20px;
     }
 
+    /* Inputs & buttons */
     input {
       padding: 12px;
       font-size: 1em;
@@ -53,6 +56,11 @@
       background: #ff4d6d;
       color: white;
       cursor: pointer;
+      transition: transform 0.2s;
+    }
+
+    button:hover {
+      transform: scale(1.1);
     }
 
     .error-text {
@@ -86,24 +94,47 @@
   </div>
 
   <script>
-    const correctPassword = "anita"; // 🔐 CHANGE THIS PASSWORD
+    const correctPassword = "anita"; // 🔐 Change your password here
+    const body = document.body;
+    const music = document.getElementById("music");
 
     function checkPassword() {
       const input = document.getElementById("passwordInput").value;
       const error = document.getElementById("errorMsg");
 
       if (input === correctPassword) {
+        // Hide lock screen, show main site
         document.getElementById("lockScreen").classList.remove("active");
         document.getElementById("mainSite").classList.add("active");
+
+        // Change background color to pink
+        body.style.background = "pink";
+
+        // Start music immediately
+        music.play();
       } else {
         error.style.display = "block";
       }
     }
 
     function startLove() {
-      document.getElementById("music").play();
+      // Already playing music, just do the hearts and message
       document.getElementById("mainSite").innerHTML =
         "<h1>I knew you'd say yes ❤️</h1><p>Happy Valentine’s Day 💕</p>";
+
+      setInterval(createHeart, 300);
+    }
+
+    function createHeart() {
+      const heart = document.createElement("div");
+      heart.style.position = "absolute";
+      heart.style.color = "rgba(255,255,255,0.8)";
+      heart.style.fontSize = (20 + Math.random() * 30) + "px";
+      heart.innerHTML = "❤️";
+      heart.style.left = Math.random() * 100 + "vw";
+      document.body.appendChild(heart);
+
+      setTimeout(() => heart.remove(), 6000);
     }
   </script>
 
