@@ -119,6 +119,58 @@
       font-size:1.1rem;
       opacity:0.95;
     }
+  /* ===== PAGE 2 NEW LAYOUT ===== */
+#mainSite{
+  position: relative;
+  background: var(--bg-pink);
+}
+
+/* photos appear here */
+#photoLayer{
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+}
+
+/* button + gif stay on top and must never be covered */
+#centerUI{
+  position: relative;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+  width: 100%;
+  height: 100%;
+}
+
+/* pastel pink button in the middle */
+#surpriseBtn{
+  background: #f7a8c7;   /* pastel pink */
+  color: #fff;
+  font-size: 1.05rem;
+  padding: 14px 26px;
+  border: none;
+  border-radius: 999px;
+  cursor: pointer;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.18);
+}
+
+#surpriseBtn:hover{
+  transform: scale(1.05);
+}
+
+/* gif placeholder area */
+#miniGif{
+  width: 160px;     /* change later */
+  height: 160px;    /* change later */
+  object-fit: contain;
+  background: rgba(255,255,255,0.15);
+  border-radius: 18px;
+}
+
   </style>
 </head>
 <body>
@@ -144,15 +196,23 @@
   </div>
 
   <!-- PAGE 2: PINK VALENTINE PAGE -->
-  <div id="mainSite" class="screen">
-    <h1 class="val-title">Anita,<br>will you be my Valentine? ❤️</h1>
-    <p class="sub">Click yes pls 😌</p>
-    <button id="yesBtn">Yes 💖</button>
+<div id="mainSite" class="screen">
+  <!-- This layer is where the random photos will appear -->
+  <div id="photoLayer"></div>
 
-    <audio id="music" loop>
-      <source src="song.mp3" type="audio/mpeg">
-    </audio>
+  <!-- Center UI (button + gif space). Photos must NOT cover this. -->
+  <div id="centerUI">
+    <button id="surpriseBtn">click me for a surprise or two</button>
+
+    <!-- GIF SPACE: replace the src later -->
+    <img id="miniGif" src="capy1.gif" alt="capybara gif" />
   </div>
+
+  <audio id="music" loop>
+    <source src="song.mp3" type="audio/mpeg">
+  </audio>
+</div>
+
 
   <script>
     const correctPassword = "capybara";
@@ -191,11 +251,81 @@ document.getElementById("continueBtn").addEventListener("click", unlock);
       if (e.key === "Enter") unlock();
     });
 
-    document.getElementById("yesBtn").addEventListener("click", () => {
-      mainSite.innerHTML =
-        "<h1 class='val-title'>I knew you'd say yes ❤️</h1>" +
-        "<p class='sub'>Happy Valentine’s Day 💕</p>";
-    });
+// ===== PAGE 2: Surprise button spawns random photos =====
+
+// 1) Put your photo filenames here (upload them to the repo)
+const photos = [
+  "us1.jpg",
+  "us2.jpg",
+  "us3.jpg",
+  "us4.jpg"
+];
+
+const photoLayer = document.getElementById("photoLayer");
+const surpriseBtn = document.getElementById("surpriseBtn");
+const miniGif = document.getElementById("miniGif");
+
+// keep newest photo on top
+let zCounter = 10;
+
+// Photo size: about double the error image (error = 20vh, so ~40vh)
+function getPhotoSizePx() {
+  const h = Math.floor(window.innerHeight * 0.40); // 40% of viewport height
+  return { w: h, h: h }; // square; change to {w: ..., h: ...} if you prefer
+}
+
+// pick random position that DOES NOT overlap the center UI (button+gif)
+function randomPositionAvoidingUI(imgW, imgH) {
+  const bounds = mainSite.getBoundingClientRect();
+  const ui = document.getElementById("centerUI").getBoundingClientRect();
+
+  // padding so photos don't touch edges
+  const pad = 12;
+
+  // try multiple times to find a safe spot
+  for (let i = 0; i < 60; i++) {
+    const x = Math.floor(Math.random() * (bounds.width - imgW - pad * 2)) + pad;
+    const y = Math.floor(Math.random() * (bounds.height - imgH - pad * 2)) + pad;
+
+    const rect = {
+      left: bounds.left + x,
+      top: bounds.top + y,
+      right: bounds.left + x + imgW,
+      bottom: bounds.top + y + imgH
+    };
+
+    const overlapsUI = !(rect.right < ui.left || rect.left > ui.right || rect.bottom < ui.top || rect.top > ui.bottom);
+
+    if (!overlapsUI) return { x, y };
+  }
+
+  // fallback: place it near top-left if we somehow can't find space
+  return { x: pad, y: pad };
+}
+
+function spawnPhoto() {
+  if (!photos.length) return;
+
+  const { w, h } = getPhotoSizePx();
+  const pos = randomPositionAvoidingUI(w, h);
+
+  const img = document.createElement("img");
+  img.src = photos[Math.floor(Math.random() * photos.length)];
+  img.style.position = "absolute";
+  img.style.left = pos.x + "px";
+  img.style.top = pos.y + "px";
+  img.style.width = w + "px";
+  img.style.height = h + "px";
+  img.style.objectFit = "cover";
+  img.style.borderRadius = "18px";
+  img.style.boxShadow = "0 12px 30px rgba(0,0,0,0.25)";
+  img.style.zIndex = String(++zCounter); // newest on top
+
+  photoLayer.appendChild(img);
+}
+
+surpriseBtn.addEventListener("click", spawnPhoto);
+
   </script>
 
 </body>
