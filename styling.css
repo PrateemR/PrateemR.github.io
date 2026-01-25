@@ -1,0 +1,97 @@
+/* ===== GLOBAL ===== */
+body {
+  margin: 0;
+  height: 100vh;
+  font-family: Arial, sans-serif;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+
+  /* start black for error screen */
+  background: #0f0f0f;
+  transition: background 0.5s;
+  overflow: hidden;
+}
+
+.screen {
+  display: none;
+  width: 100%;
+  height: 100%;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  padding: 24px;
+  box-sizing: border-box;
+}
+
+.screen.active {
+  display: flex;
+}
+
+/* ===== LOCK SCREEN ===== */
+.error-image {
+  max-width: 320px;
+  width: 80%;
+  height: auto;
+  margin-bottom: 18px;
+}
+
+.title {
+  margin: 0 0 8px 0;
+}
+
+.subtitle {
+  margin: 0 0 10px 0;
+  opacity: 0.9;
+}
+
+.password-input {
+  padding: 12px;
+  font-size: 1em;
+  border-radius: 8px;
+  border: none;
+  outline: none;
+  margin-top: 10px;
+  text-align: center;
+  width: min(320px, 90%);
+}
+
+.hint {
+  margin-top: 10px;
+  font-size: 0.9em;
+  opacity: 0.75;
+  max-width: 520px;
+  line-height: 1.35;
+}
+
+.error-text {
+  color: #ff4d6d;
+  margin-top: 10px;
+  display: none;
+  font-size: 0.95em;
+}
+
+/* ===== BUTTONS ===== */
+.primary-btn {
+  margin-top: 14px;
+  padding: 10px 26px;
+  font-size: 1em;
+  border: none;
+  border-radius: 999px;
+  background: #ff4d6d;
+  color: white;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.primary-btn:hover {
+  transform: scale(1.06);
+}
+
+/* ===== MAIN SITE ===== */
+.main-heading {
+  margin: 0 0 18px 0;
+  font-size: 3em;
+}
