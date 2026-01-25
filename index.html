@@ -175,13 +175,18 @@
 
     // start music (allowed because user clicked Continue)
       music.muted = false;
-      music.currentTime = 0;
-      music.play();
+music.currentTime = 0;
+music.play().catch(() => {
+  // If the browser blocks it for any reason, it will try again on the next click.
+  document.addEventListener("click", () => music.play(), { once: true });
+});
       } else {
-        wrong.style.display = "block";
-      }
+  wrong.style.display = "block";
+}
+}  // ✅ add this line to close function unlock()
 
-    document.getElementById("continueBtn").addEventListener("click", unlock);
+document.getElementById("continueBtn").addEventListener("click", unlock);
+
     pw.addEventListener("keydown", (e) => {
       if (e.key === "Enter") unlock();
     });
