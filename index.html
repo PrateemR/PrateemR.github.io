@@ -4,50 +4,193 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Anita, will you be my Valentine?</title>
+  <style>
+    :root{
+      --bg-error: #0b0b0f;
+      --bg-pink: #ffb6c9;
+      --accent: #ff4d6d;
+    }
 
-  <link rel="stylesheet" href="style.css" />
+    body{
+      margin:0;
+      height:100vh;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-family: Arial, sans-serif;
+      text-align:center;
+      color:white;
+      background: var(--bg-error);
+      transition: background 0.5s;
+      overflow:hidden;
+    }
+
+    .screen{
+      display:none;
+      width:100%;
+      height:100%;
+      padding:24px;
+      box-sizing:border-box;
+      align-items:center;
+      justify-content:center;
+      flex-direction:column;
+      gap:10px;
+    }
+
+    .active{ display:flex; }
+
+    /* Page 1 */
+    .error-img{
+      height:20vh;          /* ~20% of screen height */
+      width:auto;
+      max-width:70vw;
+      object-fit:contain;
+      margin-bottom:6px;
+    }
+
+    h2{
+      margin:0;
+      font-size:1.4rem;
+      font-weight:700;
+    }
+
+    .msg{
+      margin:6px 0 0 0;
+      opacity:0.9;
+      line-height:1.35;
+      max-width:560px;
+    }
+
+    .hint{
+      margin-top:10px;
+      font-size:0.95rem;
+      opacity:0.75;
+      max-width:560px;
+      line-height:1.35;
+    }
+
+    input{
+      margin-top:14px;
+      padding:12px 14px;
+      font-size:1rem;
+      border-radius:10px;
+      border:1px solid rgba(255,255,255,0.15);
+      outline:none;
+      text-align:center;
+      width:min(360px, 90%);
+      background: rgba(255,255,255,0.08);
+      color:white;
+    }
+
+    input::placeholder{
+      color: rgba(255,255,255,0.6);
+    }
+
+    button{
+      margin-top:12px;
+      padding:10px 26px;
+      font-size:1rem;
+      border:none;
+      border-radius:999px;
+      background: var(--accent);
+      color:white;
+      cursor:pointer;
+      transition: transform 0.2s;
+    }
+
+    button:hover{ transform: scale(1.05); }
+
+    .wrong{
+      display:none;
+      margin-top:10px;
+      color: var(--accent);
+      font-size:0.95rem;
+    }
+
+    /* Page 2 */
+    .val-title{
+      margin:0 0 8px 0;
+      font-size: clamp(2rem, 5vw, 3.2rem);
+      line-height:1.1;
+    }
+
+    .sub{
+      margin:0;
+      font-size:1.1rem;
+      opacity:0.95;
+    }
+  </style>
 </head>
 <body>
 
-  <!-- SECTION: LOCK / ERROR SCREEN -->
-  <main id="lockScreen" class="screen active">
-    <img src="error.png" alt="Error" class="error-image" />
+  <!-- PAGE 1: ERROR + PASSWORD -->
+  <div id="lockScreen" class="screen active">
+    <img class="error-img" src="error.png" alt="Error screen" />
 
-    <h2 class="title">Something went wrong</h2>
-    <p class="subtitle">
-      This page is protected.<br />
+    <h2>Something went wrong</h2>
+    <p class="msg">
+      This page is protected.<br>
       Please enter the password to continue.
     </p>
 
-    <input
-      type="password"
-      id="passwordInput"
-      class="password-input"
-      placeholder="Password"
-      autocomplete="off"
-      autocapitalize="none"
-      spellcheck="false"
-    />
+    <input id="pw" type="password" placeholder="Password" autocomplete="off" autocapitalize="none" spellcheck="false" />
+    <button id="continueBtn">Continue</button>
 
-    <button id="continueBtn" class="primary-btn">Continue</button>
+    <p class="hint">
+      (hint: the animal that appears everywhere in your life, from arcades to games to your spirit animal)
+    </p>
 
-<p class="hint">(hint: the animal that appears everywhere in your life, from arcades to games to your spirit animal)</p>
+    <div id="wrong" class="wrong">Incorrect password</div>
+  </div>
 
-
-    <p id="errorMsg" class="error-text">Incorrect password</p>
-  </main>
-
-  <!-- SECTION: MAIN SITE -->
-  <main id="mainSite" class="screen">
-    <h1 class="main-heading">Anita,<br />will you be my Valentine? ❤️</h1>
-
-    <button id="yesBtn" class="primary-btn">Yes 💖</button>
+  <!-- PAGE 2: PINK VALENTINE PAGE -->
+  <div id="mainSite" class="screen">
+    <h1 class="val-title">Anita,<br>will you be my Valentine? ❤️</h1>
+    <p class="sub">Click yes pls 😌</p>
+    <button id="yesBtn">Yes 💖</button>
 
     <audio id="music" loop>
-      <source src="song.mp3" type="audio/mpeg" />
+      <source src="song.mp3" type="audio/mpeg">
     </audio>
-  </main>
+  </div>
 
-  <script src="script.js"></script>
+  <script>
+    const correctPassword = "capybara";
+
+    const lockScreen = document.getElementById("lockScreen");
+    const mainSite = document.getElementById("mainSite");
+    const pw = document.getElementById("pw");
+    const wrong = document.getElementById("wrong");
+    const music = document.getElementById("music");
+
+    function unlock() {
+      if (pw.value === correctPassword) {
+        wrong.style.display = "none";
+
+        lockScreen.classList.remove("active");
+        mainSite.classList.add("active");
+
+        // switch background to pink
+        document.body.style.background = "var(--bg-pink)";
+
+        // start music (allowed because user clicked Continue)
+        music.play().catch(() => {});
+      } else {
+        wrong.style.display = "block";
+      }
+    }
+
+    document.getElementById("continueBtn").addEventListener("click", unlock);
+    pw.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") unlock();
+    });
+
+    document.getElementById("yesBtn").addEventListener("click", () => {
+      mainSite.innerHTML =
+        "<h1 class='val-title'>I knew you'd say yes ❤️</h1>" +
+        "<p class='sub'>Happy Valentine’s Day 💕</p>";
+    });
+  </script>
+
 </body>
 </html>
