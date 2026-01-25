@@ -319,18 +319,41 @@ function randomPositionAvoidingUI(imgW, imgH) {
   // fallback: place it near top-left if we somehow can't find space
   return { x: pad, y: pad };
 }
+function randomPositionAvoidingCenterUI(imgW, imgH) {
+  const bounds = mainSite.getBoundingClientRect();
+  const ui = document.getElementById("centerUI").getBoundingClientRect();
+  const pad = 12;
+
+  for (let i = 0; i < 60; i++) {
+    const x = Math.floor(Math.random() * (bounds.width - imgW - pad * 2)) + pad;
+    const y = Math.floor(Math.random() * (bounds.height - imgH - pad * 2)) + pad;
+
+    const rect = {
+      left: bounds.left + x,
+      top: bounds.top + y,
+      right: bounds.left + x + imgW,
+      bottom: bounds.top + y + imgH
+    };
+
+    const overlapsUI = !(rect.right < ui.left || rect.left > ui.right || rect.bottom < ui.top || rect.top > ui.bottom);
+    if (!overlapsUI) return { x, y };
+  }
+
+  // fallback if it can't find a spot (rare)
+  return { x: pad, y: pad };
+}
 
 function spawnPhoto() {
   if (!photos.length) return;
 
   const { w, h } = getPhotoSizePx();
-  const pos = randomPositionAvoidingUI(w, h);
+const pos = randomPositionAvoidingCenterUI(w, h);
 
-  const img = document.createElement("img");
-  img.src = photos[Math.floor(Math.random() * photos.length)];
-  img.style.position = "absolute";
-  img.style.left = pos.x + "px";
-  img.style.top = pos.y + "px";
+const img = document.createElement("img");
+img.src = photos[Math.floor(Math.random() * photos.length)];
+img.style.position = "absolute";
+img.style.left = pos.x + "px";
+img.style.top = pos.y + "px";
   img.style.width = w + "px";
   img.style.height = h + "px";
   img.style.objectFit = "cover";
