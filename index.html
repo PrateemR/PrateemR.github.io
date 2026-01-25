@@ -291,55 +291,35 @@ function getPhotoSizePx() {
   return { w: h, h: h }; // square; change to {w: ..., h: ...} if you prefer
 }
 
-// pick random position that DOES NOT overlap the center UI (button+gif)
-function randomPositionAvoidingUI(imgW, imgH) {
-  const bounds = mainSite.getBoundingClientRect();
-  const ui = document.getElementById("centerUI").getBoundingClientRect();
-
-  // padding so photos don't touch edges
-  const pad = 12;
-
-  // try multiple times to find a safe spot
-  for (let i = 0; i < 60; i++) {
-    const x = Math.floor(Math.random() * (bounds.width - imgW - pad * 2)) + pad;
-    const y = Math.floor(Math.random() * (bounds.height - imgH - pad * 2)) + pad;
-
-    const rect = {
-      left: bounds.left + x,
-      top: bounds.top + y,
-      right: bounds.left + x + imgW,
-      bottom: bounds.top + y + imgH
-    };
-
-    const overlapsUI = !(rect.right < ui.left || rect.left > ui.right || rect.bottom < ui.top || rect.top > ui.bottom);
-
-    if (!overlapsUI) return { x, y };
-  }
-
-  // fallback: place it near top-left if we somehow can't find space
-  return { x: pad, y: pad };
-}
 function randomPositionAvoidingCenterUI(imgW, imgH) {
-  const bounds = mainSite.getBoundingClientRect();
+  const bounds = photoLayer.getBoundingClientRect();   // use photoLayer coords
   const ui = document.getElementById("centerUI").getBoundingClientRect();
   const pad = 12;
 
-  for (let i = 0; i < 60; i++) {
+  // Convert UI box into photoLayer-local coordinates
+  const uiLocal = {
+    left: ui.left - bounds.left,
+    top: ui.top - bounds.top,
+    right: ui.right - bounds.left,
+    bottom: ui.bottom - bounds.top
+  };
+
+  for (let i = 0; i < 120; i++) {
     const x = Math.floor(Math.random() * (bounds.width - imgW - pad * 2)) + pad;
     const y = Math.floor(Math.random() * (bounds.height - imgH - pad * 2)) + pad;
 
-    const rect = {
-      left: bounds.left + x,
-      top: bounds.top + y,
-      right: bounds.left + x + imgW,
-      bottom: bounds.top + y + imgH
-    };
+    const rect = { left: x, top: y, right: x + imgW, bottom: y + imgH };
 
-    const overlapsUI = !(rect.right < ui.left || rect.left > ui.right || rect.bottom < ui.top || rect.top > ui.bottom);
+    const overlapsUI = !(
+      rect.right < uiLocal.left ||
+      rect.left > uiLocal.right ||
+      rect.bottom < uiLocal.top ||
+      rect.top > uiLocal.bottom
+    );
+
     if (!overlapsUI) return { x, y };
   }
 
-  // fallback if it can't find a spot (rare)
   return { x: pad, y: pad };
 }
 
