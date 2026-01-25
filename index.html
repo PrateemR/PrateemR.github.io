@@ -173,12 +173,13 @@
         // switch background to pink
         document.body.style.background = "var(--bg-pink)";
 
-        // start music (allowed because user clicked Continue)
-        music.play().catch(() => {});
-      } else {
-        wrong.style.display = "block";
-      }
-    }
+    // start music (allowed because user clicked Continue)
+music.muted = false;
+music.currentTime = 0;
+music.play();
+} else {
+  wrong.style.display = "block";
+}
 
     document.getElementById("continueBtn").addEventListener("click", unlock);
     pw.addEventListener("keydown", (e) => {
