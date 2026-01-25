@@ -292,29 +292,49 @@ function getPhotoSizePx() {
 
 function randomPositionAvoidingCenterUI(imgW, imgH) {
   const bounds = photoLayer.getBoundingClientRect();   // use photoLayer coords
-  const ui = document.getElementById("centerUI").getBoundingClientRect();
+const btn = document.getElementById("surpriseBtn").getBoundingClientRect();
+const gif = document.getElementById("miniGif").getBoundingClientRect();
   const pad = 12;
-
+const safe = 140; // extra space around button/gif (tweak if needed)
+  
   // Convert UI box into photoLayer-local coordinates
-  const uiLocal = {
-    left: ui.left - bounds.left,
-    top: ui.top - bounds.top,
-    right: ui.right - bounds.left,
-    bottom: ui.bottom - bounds.top
-  };
+ const btnLocal = {
+  left: (btn.left - bounds.left) - safe,
+  top: (btn.top - bounds.top) - safe,
+  right: (btn.right - bounds.left) + safe,
+  bottom: (btn.bottom - bounds.top) + safe
+};
 
-  for (let i = 0; i < 120; i++) {
+
+const gifLocal = {
+  left: (gif.left - bounds.left) - safe,
+  top: (gif.top - bounds.top) - safe,
+  right: (gif.right - bounds.left) + safe,
+  bottom: (gif.bottom - bounds.top) + safe
+};
+
+
+  for (let i = 0; i < 600; i++) {
     const x = Math.floor(Math.random() * (bounds.width - imgW - pad * 2)) + pad;
     const y = Math.floor(Math.random() * (bounds.height - imgH - pad * 2)) + pad;
 
     const rect = { left: x, top: y, right: x + imgW, bottom: y + imgH };
 
-    const overlapsUI = !(
-      rect.right < uiLocal.left ||
-      rect.left > uiLocal.right ||
-      rect.bottom < uiLocal.top ||
-      rect.top > uiLocal.bottom
-    );
+    const overlapsBtn = !(
+  rect.right < btnLocal.left ||
+  rect.left > btnLocal.right ||
+  rect.bottom < btnLocal.top ||
+  rect.top > btnLocal.bottom
+);
+
+const overlapsGif = !(
+  rect.right < gifLocal.left ||
+  rect.left > gifLocal.right ||
+  rect.bottom < gifLocal.top ||
+  rect.top > gifLocal.bottom
+);
+
+const overlapsUI = overlapsBtn || overlapsGif;
 
     if (!overlapsUI) return { x, y };
   }
