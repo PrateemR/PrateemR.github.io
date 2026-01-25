@@ -328,6 +328,8 @@ function spawnPhoto() {
 
   const { w, h } = getPhotoSizePx();
 const pos = randomPositionAvoidingCenterUI(w, h);
+console.log("spawnPhoto pos:", pos);
+
 
 const img = document.createElement("img");
 img.src = photos[Math.floor(Math.random() * photos.length)];
