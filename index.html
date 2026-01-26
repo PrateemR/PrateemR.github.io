@@ -224,6 +224,54 @@
   z-index: 100000;       /* above the bar */
   user-select: none;
 }
+/* ===== STORY PAGES (3+) ===== */
+.storyPage{
+  position: absolute;
+  inset: 0;
+  z-index: 200000;     /* above photos + progress bar */
+  background: var(--bg-pink);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.storyCenter{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  padding: 24px;
+}
+
+.storyText{
+  color: white;
+  font-size: 25px;
+  text-align: center;
+  max-width: min(680px, 92vw);
+  line-height: 1.35;
+}
+
+.storyGif{
+  width: 160px;
+  height: 160px;
+  object-fit: contain;
+  background: rgba(255,255,255,0.15);
+  border-radius: 18px;
+}
+
+/* black next button bottom-right */
+.nextBtn{
+  position: absolute;
+  right: 18px;
+  bottom: 18px;
+  background: #000;
+  color: #fff;
+  border: none;
+  border-radius: 999px;
+  padding: 12px 18px;
+  font-size: 0.95rem;
+  cursor: pointer;
+}
 
   </style>
 </head>
@@ -273,6 +321,49 @@
   <audio id="music" loop>
     <source src="song.mp3" type="audio/mpeg">
   </audio>
+  <!-- PAGE 3 -->
+<div id="page3" class="storyPage" style="display:none;">
+  <div class="storyCenter">
+    <div class="storyText">so the purpose of this website wasnt really to spawn a ton of pictures</div>
+    <img class="storyGif" src="capy2.gif" alt="">
+  </div>
+  <button class="nextBtn" id="next3">Next</button>
+</div>
+
+<!-- PAGE 4 -->
+<div id="page4" class="storyPage" style="display:none;">
+  <div class="storyCenter">
+    <div class="storyText">although i did love staring at your beauty in all the pieces</div>
+    <img class="storyGif" src="capy3.gif" alt="">
+  </div>
+  <button class="nextBtn" id="next4">Next</button>
+</div>
+
+<!-- PAGE 5 -->
+<div id="page5" class="storyPage" style="display:none;">
+  <div class="storyCenter">
+    <div class="storyText">i guess the pupose of this website was to connect heart to heart</div>
+    <img class="storyGif" src="capy4.gif" alt="">
+  </div>
+  <button class="nextBtn" id="next5">Next</button>
+</div>
+
+<!-- PAGE 6 -->
+<div id="page6" class="storyPage" style="display:none;">
+  <div class="storyCenter">
+    <div class="storyText">and doing new things fuels our love; I think thats the general thesis</div>
+    <img class="storyGif" src="capy5.gif" alt="">
+  </div>
+  <button class="nextBtn" id="next6">Next</button>
+</div>
+
+<!-- PAGE 7 (placeholder for later) -->
+<div id="page7" class="storyPage" style="display:none;">
+  <div class="storyCenter">
+    <div class="storyText">❤️</div>
+  </div>
+</div>
+
 </div>
 
 
@@ -463,25 +554,29 @@ img.style.top = pos.y + "px";
 }
 
 surpriseBtn.addEventListener("click", spawnPhoto);
-moveOnBtn.addEventListener("click", () => {
-  // “Page 3” — simple for now
-  mainSite.innerHTML = `
-    <div style="
-      height:100%;
-      width:100%;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      text-align:center;
-      color:white;
-      font-size:40px;
-      padding:24px;
-      box-sizing:border-box;
-    ">
-      so the purpose of this website wasn't really to spawn a ton of art
-    </div>
-  `;
-});
+function showStoryPage(n){
+  // hide the photo-click UI (page 2 stuff)
+  document.getElementById("centerUI").style.display = "none";
+  document.getElementById("photoLayer").style.display = "none";
+
+  // show the requested story page
+  const page = document.getElementById("page" + n);
+  page.style.display = "flex";
+}
+
+function goToStoryPage(from, to){
+  document.getElementById("page" + from).style.display = "none";
+  document.getElementById("page" + to).style.display = "flex";
+}
+
+// Show page 3 when moveOn is clicked (music continues because we never remove <audio>)
+moveOnBtn.addEventListener("click", () => showStoryPage(3));
+
+// Next buttons
+document.getElementById("next3").addEventListener("click", () => goToStoryPage(3, 4));
+document.getElementById("next4").addEventListener("click", () => goToStoryPage(4, 5));
+document.getElementById("next5").addEventListener("click", () => goToStoryPage(5, 6));
+document.getElementById("next6").addEventListener("click", () => goToStoryPage(6, 7));
 
 
   </script>
