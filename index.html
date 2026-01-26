@@ -169,6 +169,61 @@
   background: rgba(255,255,255,0.15);
   border-radius: 18px;
 }
+/* Counter */
+#clickCounter{
+  font-size: 1rem;
+  color: white;
+  opacity: 0.95;
+}
+
+/* Move on button (white w/ black text) */
+#moveOnBtn{
+  background: white;
+  color: black;
+  border: none;
+  border-radius: 16px;
+  padding: 12px 16px;
+  max-width: min(560px, 92vw);
+  font-size: 0.95rem;
+  cursor: pointer;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.18);
+}
+
+/* Progress bar wrapper (centered, ~50% wider than gif) */
+#progressWrap{
+  position: relative;
+  width: 240px;          /* gif is 160px; this is 50% longer */
+  height: 18px;
+  border-radius: 999px;
+  overflow: visible;     /* lets it grow beyond 100% */
+  background: rgba(255,255,255,0.25);
+  margin-top: -4px;
+}
+
+/* Progress fill — should overlap images */
+#progressBar{
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 18px;
+  width: 0%;
+  border-radius: 999px;
+  background: #00c853;   /* green */
+  z-index: 99999;        /* above photos */
+}
+
+/* Percent text centered on the bar */
+#progressText{
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.85rem;
+  color: white;
+  z-index: 100000;       /* above the bar */
+  user-select: none;
+}
 
   </style>
 </head>
@@ -201,10 +256,18 @@
 
   <!-- Center UI (button + gif space). Photos must NOT cover this. -->
   <div id="centerUI">
+    <div id="clickCounter">Clicks: 0</div>
+    <button id="moveOnBtn" style="display:none;">
+  ok fine you have proven that you LOVE seeing cute pictures of us, you can move on now if you want
+</button>
     <button id="surpriseBtn">click me for a surprise or two</button>
 
     <!-- GIF SPACE: replace the src later -->
     <img id="miniGif" src="capy1.gif" alt="capybara gif" />
+    <div id="progressWrap">
+  <div id="progressBar"></div>
+  <div id="progressText">0%</div>
+</div>
   </div>
 
   <audio id="music" loop>
@@ -280,9 +343,14 @@ const photos = [
 const photoLayer = document.getElementById("photoLayer");
 const surpriseBtn = document.getElementById("surpriseBtn");
 const miniGif = document.getElementById("miniGif");
+const clickCounter = document.getElementById("clickCounter");
+const progressBar = document.getElementById("progressBar");
+const progressText = document.getElementById("progressText");
+const moveOnBtn = document.getElementById("moveOnBtn");
 
 // keep newest photo on top
 let zCounter = 10;
+let clickCount = 0;
 
 // Photo size: about double the error image (error = 20vh, so ~40vh)
 function getPhotoSizePx() {
@@ -341,9 +409,38 @@ const overlapsUI = overlapsBtn || overlapsGif;
 
   return { x: pad, y: pad };
 }
+function progressColorFor(pct){
+  // 0..100 = green (#00c853)
+  // 100..200 = fades to red (#FF0000), then clamps
+  if (pct <= 100) return "#00c853";
+  const t = Math.min((pct - 100) / 100, 1); // 0..1
+  const r = Math.round(0 + (255 - 0) * t);
+  const g = Math.round(200 + (0 - 200) * t); // 200 -> 0
+  const b = Math.round(83 + (0 - 83) * t);   // 83  -> 0
+  return `rgb(${r}, ${g}, ${b})`;
+}
 
 function spawnPhoto() {
   if (!photos.length) return;
+  clickCount += 1;
+
+// counter
+clickCounter.textContent = `Clicks: ${clickCount}`;
+
+// progress keeps increasing past 100
+progressText.textContent = `${clickCount}%`;
+
+// width grows forever (will spill off the bar once >100%)
+progressBar.style.width = `${clickCount}%`;
+
+// color: green -> red as it exceeds 100 (clamps at pure red)
+progressBar.style.background = progressColorFor(clickCount);
+
+// show the move-on button at 100 clicks
+if (clickCount >= 100) {
+  moveOnBtn.style.display = "block";
+}
+
 
   const { w, h } = getPhotoSizePx();
 const pos = randomPositionAvoidingCenterUI(w, h);
@@ -366,6 +463,26 @@ img.style.top = pos.y + "px";
 }
 
 surpriseBtn.addEventListener("click", spawnPhoto);
+moveOnBtn.addEventListener("click", () => {
+  // “Page 3” — simple for now
+  mainSite.innerHTML = `
+    <div style="
+      height:100%;
+      width:100%;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      text-align:center;
+      color:white;
+      font-size:25px;
+      padding:24px;
+      box-sizing:border-box;
+    ">
+      so the purpose of this website wasnt really to spawn a ton of pictures
+    </div>
+  `;
+});
+
 
   </script>
 
