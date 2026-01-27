@@ -272,6 +272,18 @@
   font-size: 0.95rem;
   cursor: pointer;
 }
+.backBtn{
+  position: absolute;
+  left: 18px;
+  bottom: 18px;
+  background: #000;
+  color: #fff;
+  border: none;
+  border-radius: 999px;
+  padding: 12px 18px;
+  font-size: 0.95rem;
+  cursor: pointer;
+}
 
   </style>
 </head>
@@ -357,12 +369,46 @@
   <button class="nextBtn" id="next6">Next</button>
 </div>
 
-<!-- PAGE 7 (placeholder for later) -->
+<!-- PAGE 7 -->
 <div id="page7" class="storyPage" style="display:none;">
   <div class="storyCenter">
-    <div class="storyText">i got you something green, you could say it resembel</div>
+    <div class="storyText">I got you something green, a reminder of our start.</div>
+    <img class="storyGif" src="capy6.gif" alt="">
   </div>
+  <button class="backBtn" id="back7">Back</button>
+  <button class="nextBtn" id="next7">Next</button>
 </div>
+
+<!-- PAGE 8 -->
+<div id="page8" class="storyPage" style="display:none;">
+  <div class="storyCenter">
+    <div class="storyText">I hope it stays with you forever, just like some adhesive.</div>
+    <img class="storyGif" src="capy7.gif" alt="">
+  </div>
+  <button class="backBtn" id="back8">Back</button>
+  <button class="nextBtn" id="next8">Next</button>
+</div>
+
+<!-- PAGE 9 -->
+<div id="page9" class="storyPage" style="display:none;">
+  <div class="storyCenter">
+    <div class="storyText">Since you've been stuck in my life, it's been my favourite part.</div>
+    <img class="storyGif" src="capy8.gif" alt="">
+  </div>
+  <button class="backBtn" id="back9">Back</button>
+  <button class="nextBtn" id="next9">Next</button>
+</div>
+
+<!-- PAGE 10 -->
+<div id="page10" class="storyPage" style="display:none;">
+  <div class="storyCenter">
+    <div class="storyText">I want to be glued to you, until the rhythm of our hearts ceases.</div>
+    <img class="storyGif" src="capy9.gif" alt="">
+  </div>
+  <button class="backBtn" id="back10">Back</button>
+  <button class="nextBtn" id="next10">Next</button>
+</div>
+
 
 </div>
 
@@ -577,6 +623,10 @@ document.getElementById("next3").addEventListener("click", () => goToStoryPage(3
 document.getElementById("next4").addEventListener("click", () => goToStoryPage(4, 5));
 document.getElementById("next5").addEventListener("click", () => goToStoryPage(5, 6));
 document.getElementById("next6").addEventListener("click", () => goToStoryPage(6, 7));
+document.getElementById("next7").addEventListener("click", () => goToStoryPage(7, 8));
+document.getElementById("next8").addEventListener("click", () => goToStoryPage(8, 9));
+document.getElementById("next9").addEventListener("click", () => goToStoryPage(9, 10));
+
 
 
   </script>
