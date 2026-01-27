@@ -290,6 +290,58 @@
   font-size: 0.95rem;
   cursor: pointer;
 }
+#page12 { position: relative; } /* so the overlays anchor properly */
+
+#gameTimer{
+  position: absolute;
+  top: 18px;
+  left: 18px;
+  font-size: 28px;
+  font-weight: 800;
+  padding: 8px 12px;
+  border-radius: 12px;
+  background: rgba(255,255,255,0.85);
+  z-index: 50;
+}
+
+#gameScore{
+  position: absolute;
+  top: 18px;
+  right: 18px;
+  font-size: 28px;
+  font-weight: 800;
+  padding: 8px 12px;
+  border-radius: 12px;
+  background: rgba(255,255,255,0.85);
+  z-index: 50;
+}
+
+#gameArea{
+  position: relative;
+  width: min(720px, 88vw);
+  height: 420px;
+  margin-top: 18px;
+  border-radius: 18px;
+  background: rgba(255,255,255,0.25);
+  overflow: hidden;
+}
+
+#targetBtn{
+  position: absolute;
+  padding: 14px 18px;
+  font-size: 18px;
+  border-radius: 14px;
+  cursor: pointer;
+}
+
+#gameMsg{
+  position: absolute;
+  bottom: 14px;
+  left: 14px;
+  right: 14px;
+  font-size: 18px;
+  font-weight: 700;
+}
 
   </style>
 </head>
@@ -432,6 +484,23 @@
   <button class="nextBtn" id="next11">Next</button>
 </div>
 
+<!-- PAGE 12 (GAME) -->
+<div id="page12" class="storyPage" style="display:none;">
+  <div id="gameTimer">10.000</div>
+  <div id="gameScore">0</div>
+
+  <div class="storyCenter">
+    <div class="storyText">Click it before the timer hits 0 😈</div>
+
+    <div id="gameArea">
+      <button id="targetBtn" style="display:none;">CLICK ME</button>
+      <div id="gameMsg"></div>
+    </div>
+  </div>
+
+  <button class="backBtn" id="back12">Back</button>
+  <button class="nextBtn" id="next12" style="display:none;">Next</button>
+</div>
 
 </div>
 
@@ -667,6 +736,145 @@ document.getElementById("back8").addEventListener("click", () => goToStoryPage(8
 document.getElementById("back9").addEventListener("click", () => goToStoryPage(9, 8));
 document.getElementById("back10").addEventListener("click", () => goToStoryPage(10, 9));
 document.getElementById("back11").addEventListener("click", () => goToStoryPage(11, 10));
+
+    // ===== PAGE 12 GAME =====
+const page12 = document.getElementById("page12");
+const timerEl = document.getElementById("gameTimer");
+const scoreEl = document.getElementById("gameScore");
+const targetBtn = document.getElementById("targetBtn");
+const gameArea = document.getElementById("gameArea");
+const gameMsg = document.getElementById("gameMsg");
+const next12 = document.getElementById("next12");
+const back12 = document.getElementById("back12");
+
+let score = 0;
+
+// Starting time (seconds). Set to whatever you want the first round to be.
+let startTimeSec = 10.0;
+
+// Each successful click reduces the next start time.
+// Your example 10 -> 6.67 suggests multiplying by 2/3.
+const decayFactor = 2 / 3;
+
+// Don’t let it get impossible
+const minStartTimeSec = 1.25;
+
+let roundStartMs = 0;
+let rafId = null;
+let gameActive = false;
+
+function formatTime(sec) {
+  // Show seconds + milliseconds: 04.237
+  const s = Math.max(0, sec);
+  const whole = Math.floor(s);
+  const ms = Math.floor((s - whole) * 1000);
+  return String(whole).padStart(2, "0") + "." + String(ms).padStart(3, "0");
+}
+
+function placeButtonRandomly() {
+  // Ensure we have sizes (button must be displayed before measuring)
+  const areaRect = gameArea.getBoundingClientRect();
+  const btnRect = targetBtn.getBoundingClientRect();
+
+  const maxX = Math.max(0, areaRect.width - btnRect.width);
+  const maxY = Math.max(0, areaRect.height - btnRect.height);
+
+  const x = Math.random() * maxX;
+  const y = Math.random() * maxY;
+
+  targetBtn.style.left = `${x}px`;
+  targetBtn.style.top = `${y}px`;
+}
+
+function stopGameLoop() {
+  if (rafId) cancelAnimationFrame(rafId);
+  rafId = null;
+}
+
+function endGame() {
+  gameActive = false;
+  stopGameLoop();
+  targetBtn.style.display = "none";
+  gameMsg.textContent = `Time’s up 😭 Final score: ${score}`;
+  next12.style.display = "inline-block";
+}
+
+function startRound() {
+  next12.style.display = "none";
+  gameMsg.textContent = "";
+  gameActive = true;
+
+  // show button (must be visible before we can position accurately)
+  targetBtn.style.display = "inline-block";
+  placeButtonRandomly();
+
+  // start timer
+  roundStartMs = performance.now();
+
+  // loop
+  stopGameLoop();
+  const loop = (now) => {
+    if (!gameActive) return;
+
+    const elapsedSec = (now - roundStartMs) / 1000;
+    const remaining = startTimeSec - elapsedSec;
+
+    timerEl.textContent = formatTime(remaining);
+
+    if (remaining <= 0) {
+      timerEl.textContent = "00.000";
+      endGame();
+      return;
+    }
+
+    rafId = requestAnimationFrame(loop);
+  };
+
+  rafId = requestAnimationFrame(loop);
+}
+
+function resetGame12() {
+  score = 0;
+  scoreEl.textContent = score;
+  startTimeSec = 10.0;              // initial round time
+  timerEl.textContent = formatTime(startTimeSec);
+  gameMsg.textContent = "Get ready…";
+  next12.style.display = "none";
+  targetBtn.style.display = "none";
+  gameActive = false;
+  stopGameLoop();
+
+  // Start immediately (or add a short delay if you want)
+  startRound();
+}
+
+// Click = score + teleport + reduce start time + restart instantly
+targetBtn.addEventListener("click", () => {
+  if (!gameActive) return;
+
+  score += 10;
+  scoreEl.textContent = score;
+
+  // Reduce the next start time
+  startTimeSec = Math.max(minStartTimeSec, startTimeSec * decayFactor);
+
+  // Restart instantly
+  startRound();
+});
+
+// Hook navigation like your other pages
+back12.addEventListener("click", () => {
+  stopGameLoop();
+  gameActive = false;
+  goToStoryPage(12, 11);
+});
+
+// Start game whenever you enter page 12
+document.getElementById("next11").addEventListener("click", () => {
+  goToStoryPage(11, 12);
+  resetGame12();
+});
+
 
   </script>
 
