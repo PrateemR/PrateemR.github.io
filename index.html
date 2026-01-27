@@ -293,7 +293,54 @@
   <div id="lockScreen" class="screen active">
     <img class="error-img" src="error.png" alt="Error screen" />
 
-  
+      <h2>Something went wrong</h2>
+    <p class="msg">
+      This page is protected.<br>
+      Please enter the password to continue.
+    </p>
+
+    <input id="pw" type="password" placeholder="Password" autocomplete="off" autocapitalize="none" spellcheck="false" />
+    <button id="continueBtn">Continue</button>
+
+    <p class="hint">
+      (hint: the animal that appears everywhere in your life, from arcades to games to your spirit animal)
+    </p>
+
+    <div id="wrong" class="wrong">Incorrect password</div>
+  </div>
+
+  <!-- PAGE 2: PINK VALENTINE PAGE -->
+<div id="mainSite" class="screen">
+  <!-- This layer is where the random photos will appear -->
+  <div id="photoLayer"></div>
+
+  <!-- Center UI (button + gif space). Photos must NOT cover this. -->
+  <div id="centerUI">
+    <div id="clickCounter">Clicks: 0</div>
+    <button id="moveOnBtn" style="display:none;">
+  ok fine you have proven that you LOVE seeing cute pictures of us, you can move on now if you want
+</button>
+    <button id="surpriseBtn">click me for a surprise or two</button>
+
+    <!-- GIF SPACE: replace the src later -->
+    <img id="miniGif" src="capy1.gif" alt="capybara gif" />
+    <div id="progressWrap">
+  <div id="progressBar"></div>
+  <div id="progressText">0%</div>
+</div>
+  </div>
+
+  <audio id="music" loop>
+    <source src="song.mp3" type="audio/mpeg">
+  </audio>
+  <!-- PAGE 3 -->
+<div id="page3" class="storyPage" style="display:none;">
+  <div class="storyCenter">
+    <div class="storyText">so the purpose of this website wasnt really to spawn a ton of art</div>
+    <img class="storyGif" src="capy2.gif" alt="">
+  </div>
+  <button class="backBtn" id="back3">Back</button>
+  <button class="nextBtn" id="next3">Next</button>
 </div>
 
 <!-- PAGE 4 -->
