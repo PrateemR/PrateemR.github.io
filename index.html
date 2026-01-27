@@ -171,7 +171,7 @@
 }
   
     .storyGif {
-      width: 600px;   /* adjust this size */
+      width: 400px;   /* adjust this size */
       height: auto;
     }
 
@@ -865,8 +865,13 @@ targetBtn.addEventListener("click", () => {
   score += 10;
   scoreEl.textContent = score;
 
-  // Reduce the next start time
-  startTimeSec = Math.max(minStartTimeSec, startTimeSec * decayFactor);
+// Reduce the next start time
+startTimeSec = Math.max(minStartTimeSec, startTimeSec * decayFactor);
+
+// After score reaches 150, make it harder each click
+if (score >= 150) {
+  startTimeSec = Math.max(minStartTimeSec, startTimeSec - 0.1);
+}
 
   // Restart instantly
   startRound();
