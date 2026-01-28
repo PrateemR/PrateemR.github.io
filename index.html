@@ -362,22 +362,6 @@
   font-weight: 700;
 }
     
-<div id="ytModal" class="ytModal" style="display:none;">
-  <div class="ytBox">
-    <button id="closeYt" class="ytClose">×</button>
-    <div class="ytTitle">Ok. You earned this 😭</div>
-    <iframe
-      id="ytFrame"
-      width="560"
-      height="315"
-      src=""
-      title="YouTube video"
-      frameborder="0"
-      allow="autoplay; encrypted-media"
-      allowfullscreen>
-    </iframe>
-  </div>
-</div>
 
 .storyGif{
   width: 300px !important;   /* adjust size here */
@@ -777,6 +761,22 @@
 
   <button class="backBtn" id="back15">Back</button>
 </div>
+<div id="ytModal" class="ytModal" style="display:none;">
+  <div class="ytBox">
+    <button id="closeYt" class="ytClose">×</button>
+    <div class="ytTitle">Ok. You earned this 😭</div>
+    <iframe
+      id="ytFrame"
+      width="560"
+      height="315"
+      src=""
+      title="YouTube video"
+      frameborder="0"
+      allow="autoplay; encrypted-media"
+      allowfullscreen>
+    </iframe>
+  </div>
+</div>
 
 
   <script>
@@ -794,7 +794,7 @@ const progressMilestones = [
   { p: 900, msg: "You're at 900 now, that means you've pressed that same pink button 180 times. It also means that you've spawned 180 pictures of us :)" },
   { p: 1000, msg: "Good job you got to 1000. Happy now? Did that fuel your dopamine?" },
   { p: 1005, msg: "Well if it didn't then I hope this will ↓" },
-  { p: 1010, msg: "I pinky promise this is the last bit of text, you can move on now" },
+  { p: 1010, msg: "I pinky promise this is the last bit of text, you can move on now" }
 ];
 
 let lastMilestoneIndex = -1;
