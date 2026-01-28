@@ -439,6 +439,130 @@
   border: none;
   cursor: pointer;
 }
+/* PAGE 14 big question text */
+.valentineBigText{
+  font-size: clamp(28px, 4vw, 54px);
+  font-weight: 900;
+  text-align: center;
+  margin-bottom: 22px;
+  line-height: 1.05;
+}
+
+/* Buttons layout */
+.valButtonsRow{
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 14px;
+  position: relative;
+  z-index: 5;
+}
+
+.valBtn{
+  padding: 14px 22px;
+  border-radius: 18px;
+  font-weight: 900;
+  font-size: 18px;
+  cursor: pointer;
+}
+
+.yesBtn{
+  transform-origin: center;
+}
+
+.noBtn{
+  position: relative; /* will become absolute after first "No" press */
+  transform-origin: center;
+}
+
+.thinkBtn{
+  margin-top: 6px;
+  font-size: 16px;
+  padding: 12px 18px;
+  border-radius: 18px;
+  position: relative;
+  z-index: 5;
+}
+
+.thinkMsg{
+  margin-top: 14px;
+  font-weight: 800;
+  text-align: center;
+  min-height: 24px;
+  position: relative;
+  z-index: 5;
+}
+
+/* Big timer for "think" */
+#thinkTimer{
+  position: absolute;
+  font-weight: 1000;
+  font-size: 48px;
+  padding: 10px 14px;
+  border-radius: 16px;
+  background: rgba(0,0,0,0.65);
+  color: white;
+  z-index: 999999;
+}
+
+/* YES page styling */
+.yesGif{
+  width: 20vh;         /* ~20% of screen height */
+  height: auto;
+  margin-bottom: 16px;
+}
+
+.photoFrame{
+  width: min(360px, 75vw);
+  height: min(360px, 75vw);
+  border: 8px solid hotpink;
+  border-radius: 22px;
+  padding: 10px;
+  background: rgba(255,255,255,0.25);
+  box-sizing: border-box;
+  margin: 10px 0 16px;
+}
+
+.photoFrame img{
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 16px;
+}
+
+/* "No" sadness overlay + dullness */
+#page14{ position: relative; overflow: hidden; }
+
+#noOverlay{
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0);
+  pointer-events: none;
+  z-index: 1;
+}
+
+#rainLayer{
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 2;
+}
+
+/* simple raindrop */
+.rainDrop{
+  position: absolute;
+  top: -20px;
+  width: 2px;
+  height: 18px;
+  background: rgba(255,255,255,0.65);
+  animation: rainFall linear infinite;
+}
+
+@keyframes rainFall{
+  from { transform: translateY(0); }
+  to   { transform: translateY(120vh); }
+}
 
   </style>
 </head>
@@ -605,6 +729,53 @@
   <button class="nextBtn" id="next12" style="display:none;">Next</button>
 </div>
 
+</div>
+<!-- PAGE 13 -->
+<div id="page13" class="storyPage" style="display:none;">
+  <div class="storyCenter">
+    <div class="storyText">
+      Good job on the game, but that also wasnt the purpose of this whole thing<br>
+      I actually just wanted to ask you one simple question :)
+    </div>
+  </div>
+  <button class="backBtn" id="back13">Back</button>
+  <button class="nextBtn" id="next13">Next</button>
+</div>
+<!-- PAGE 14 -->
+<div id="page14" class="storyPage" style="display:none;">
+  <!-- dark overlay + rain live here -->
+  <div id="noOverlay"></div>
+  <div id="rainLayer"></div>
+
+  <div class="storyCenter">
+    <div class="valentineBigText">Anita, will you be my Valentine?</div>
+
+    <div class="valButtonsRow">
+      <button id="yesBtn" class="valBtn yesBtn">Yes</button>
+      <button id="noBtn" class="valBtn noBtn">No</button>
+    </div>
+
+    <button id="thinkBtn" class="valBtn thinkBtn">Hm, I'll think about it...</button>
+
+    <div id="thinkMsg" class="thinkMsg"></div>
+  </div>
+
+  <button class="backBtn" id="back14">Back</button>
+</div>
+<!-- PAGE 15 (YES) -->
+<div id="page15" class="storyPage" style="display:none;">
+  <div class="storyCenter">
+    <img class="yesGif" src="capy_yes.gif" alt="yay gif">
+
+    <div class="photoFrame">
+      <!-- placeholder image -->
+      <img id="valPhoto" src="placeholder.jpg" alt="placeholder">
+    </div>
+
+    <div class="storyText">Thank you for saying yes. I love you Anita</div>
+  </div>
+
+  <button class="backBtn" id="back15">Back</button>
 </div>
 
 
@@ -898,6 +1069,13 @@ document.getElementById("back8").addEventListener("click", () => goToStoryPage(8
 document.getElementById("back9").addEventListener("click", () => goToStoryPage(9, 8));
 document.getElementById("back10").addEventListener("click", () => goToStoryPage(10, 9));
 document.getElementById("back11").addEventListener("click", () => goToStoryPage(11, 10));
+document.getElementById("next12").addEventListener("click", () => goToStoryPage(12, 13));
+document.getElementById("back13").addEventListener("click", () => goToStoryPage(13, 12));
+document.getElementById("next13").addEventListener("click", () => goToStoryPage(13, 14));
+document.getElementById("back14").addEventListener("click", () => {
+  resetNoEffects();
+  goToStoryPage(14, 13);
+});
 
     // ===== PAGE 12 GAME =====
 const page12 = document.getElementById("page12");
@@ -1047,6 +1225,167 @@ document.getElementById("next11").addEventListener("click", () => {
   resetGame12();
 });
 
+const page14 = document.getElementById("page14");
+const yesBtn = document.getElementById("yesBtn");
+const noBtn = document.getElementById("noBtn");
+const thinkBtn = document.getElementById("thinkBtn");
+const thinkMsg = document.getElementById("thinkMsg");
+const noOverlay = document.getElementById("noOverlay");
+const rainLayer = document.getElementById("rainLayer");
+
+let noPresses = 0;
+let yesScale = 1;
+let noScale = 1;
+
+let thinkInterval = null;
+let thinkCleanupTimeout = null;
+
+function randBetween(min, max){
+  return Math.random() * (max - min) + min;
+}
+
+/* ===== YES ===== */
+yesBtn.addEventListener("click", () => {
+  resetNoEffects();
+  clearThinkStuff();
+  goToStoryPage(14, 15);
+});
+
+document.getElementById("back15").addEventListener("click", () => {
+  goToStoryPage(15, 14);
+});
+
+/* ===== NO ===== */
+function ensureNoAbsolute(){
+  if (getComputedStyle(noBtn).position !== "absolute") {
+    noBtn.style.position = "absolute";
+  }
+}
+
+function moveNoRandom(){
+  const rect = page14.getBoundingClientRect();
+
+  // keep it on screen (with padding)
+  const pad = 20;
+  const btnW = noBtn.offsetWidth || 80;
+  const btnH = noBtn.offsetHeight || 40;
+
+  const x = randBetween(pad, rect.width - btnW - pad);
+  const y = randBetween(pad + 90, rect.height - btnH - pad); // avoid top text area a bit
+
+  noBtn.style.left = `${x}px`;
+  noBtn.style.top = `${y}px`;
+
+  // ensure it's above anything it overlaps
+  noBtn.style.zIndex = 999999;
+}
+
+function addRainDrops(count){
+  for (let i = 0; i < count; i++){
+    const d = document.createElement("div");
+    d.className = "rainDrop";
+    d.style.left = `${Math.random() * 100}%`;
+    d.style.animationDuration = `${randBetween(0.6, 1.4)}s`;
+    d.style.opacity = `${randBetween(0.25, 0.8)}`;
+    d.style.height = `${randBetween(12, 26)}px`;
+    rainLayer.appendChild(d);
+  }
+}
+
+function applyNoMood(){
+  // darker & duller each press
+  const darkness = Math.min(0.55, noPresses * 0.06);
+  noOverlay.style.background = `rgba(0,0,0,${darkness})`;
+
+  // dullness via filter on page content
+  const sat = Math.max(0.35, 1 - noPresses * 0.08);
+  const bright = Math.max(0.55, 1 - noPresses * 0.06);
+  page14.style.filter = `saturate(${sat}) brightness(${bright})`;
+}
+
+noBtn.addEventListener("click", () => {
+  noPresses++;
+
+  // no gets smaller, yes gets bigger
+  noScale = Math.max(0.25, noScale * 0.82);
+  yesScale = Math.min(2.8, yesScale * 1.12);
+
+  noBtn.style.transform = `scale(${noScale})`;
+  yesBtn.style.transform = `scale(${yesScale})`;
+
+  ensureNoAbsolute();
+  moveNoRandom();
+
+  applyNoMood();
+
+  // more rain each press (starts small)
+  addRainDrops(6 + noPresses * 4);
+});
+
+/* Reset when leaving/re-entering or hitting Yes */
+function resetNoEffects(){
+  noPresses = 0;
+  yesScale = 1;
+  noScale = 1;
+
+  yesBtn.style.transform = "scale(1)";
+  noBtn.style.transform = "scale(1)";
+
+  noBtn.style.position = "relative";
+  noBtn.style.left = "";
+  noBtn.style.top = "";
+  noBtn.style.zIndex = "";
+
+  noOverlay.style.background = "rgba(0,0,0,0)";
+  page14.style.filter = ""; // remove dull filter
+
+  rainLayer.innerHTML = "";
+}
+
+/* ===== THINK ===== */
+function clearThinkStuff(){
+  if (thinkInterval) clearInterval(thinkInterval);
+  if (thinkCleanupTimeout) clearTimeout(thinkCleanupTimeout);
+  thinkInterval = null;
+  thinkCleanupTimeout = null;
+
+  const existingTimer = document.getElementById("thinkTimer");
+  if (existingTimer) existingTimer.remove();
+
+  thinkMsg.textContent = "";
+}
+
+thinkBtn.addEventListener("click", () => {
+  clearThinkStuff();
+
+  // create timer element at random position
+  const t = document.createElement("div");
+  t.id = "thinkTimer";
+  t.textContent = "5";
+  page14.appendChild(t);
+
+  const rect = page14.getBoundingClientRect();
+  t.style.left = `${randBetween(30, rect.width - 100)}px`;
+  t.style.top  = `${randBetween(90, rect.height - 140)}px`;
+
+  let remaining = 5;
+  thinkInterval = setInterval(() => {
+    remaining--;
+    t.textContent = String(remaining);
+
+    if (remaining <= 0) {
+      clearInterval(thinkInterval);
+      thinkInterval = null;
+
+      thinkMsg.textContent = "I think that was more than enough thinking time. Well I hope it was :(";
+
+      // remove timer + text after 5 seconds
+      thinkCleanupTimeout = setTimeout(() => {
+        clearThinkStuff();
+      }, 5000);
+    }
+  }, 1000);
+});
 
   </script>
 
