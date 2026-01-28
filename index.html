@@ -118,9 +118,11 @@
     }
   /* ===== PAGE 2 NEW LAYOUT ===== */
 #mainSite{
-  position: relative;
+  position: fixed;
+  inset: 0;
   background: var(--bg-pink);
 }
+
 
 /* photos appear here */
 #photoLayer{
@@ -360,8 +362,8 @@
   width: 300px !important;   /* adjust size here */
   height: auto !important;
   max-width: 90%;
-
-
+}
+    
 .muteBtn{
   position: fixed;
   left: 18px;
@@ -569,6 +571,8 @@
   </div>
   <div id="progressMsg"></div>
 </div>
+
+   </div> <!-- closes #centerUI -->
 
 
   <audio id="music" loop>
