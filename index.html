@@ -438,6 +438,10 @@
 </head>
 <body>
 
+  <button id="muteBtn" class="muteBtn">Mute 🔇</button>
+
+
+
   <!-- PAGE 1: ERROR + PASSWORD -->
   <div id="lockScreen" class="screen active">
     <img class="error-img" src="error.png" alt="Error screen" />
@@ -460,8 +464,6 @@
 
   <!-- PAGE 2: PINK VALENTINE PAGE -->
 <div id="mainSite" class="screen">
-
-  <button id="muteBtn" class="muteBtn">Mute 🔇</button>
 
   <!-- This layer is where the random photos will appear -->
   <div id="photoLayer"></div>
@@ -601,22 +603,6 @@
 
 
   <script>
-const muteBtn = document.getElementById("muteBtn");
-
-if (muteBtn && music) {
-  muteBtn.addEventListener("click", () => {
-    music.muted = !music.muted;
-
-    // optional: also pause/play so it feels instant
-    if (music.muted) {
-      music.pause();
-      muteBtn.textContent = "Unmute 🔊";
-    } else {
-      music.play().catch(() => {});
-      muteBtn.textContent = "Mute 🔇";
-    }
-  });
-}
 
 const progressMilestones = [
   { p: 200, msg: "Why are you still pressing the button?" },
@@ -659,6 +645,21 @@ const progressMsgEl = document.getElementById("progressMsg");
     const pw = document.getElementById("pw");
     const wrong = document.getElementById("wrong");
     const music = document.getElementById("music");
+const muteBtn = document.getElementById("muteBtn");
+
+if (muteBtn && music) {
+  muteBtn.addEventListener("click", () => {
+    music.muted = !music.muted;
+
+    if (music.muted) {
+      music.pause();
+      muteBtn.textContent = "Unmute 🔊";
+    } else {
+      music.play().catch(() => {});
+      muteBtn.textContent = "Mute 🔇";
+    }
+  });
+}
 
     function unlock() {
       if (pw.value === correctPassword) {
