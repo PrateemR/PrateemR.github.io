@@ -194,7 +194,8 @@
 #progressWrap{
   position: relative;
   width: 240px;          /* gif is 160px; this is 50% longer */
-  height: 18px;
+  padding-top: 18px;   /* reserves space for the bar */
+  height: auto;        /* allow wrap to grow */
   border-radius: 999px;
   overflow: visible;     /* lets it grow beyond 100% */
   background: rgba(255,255,255,0.25);
@@ -226,16 +227,21 @@
   user-select: none;
 }
 
-   #progressMsg{
-  margin-top: 22px;
+#progressMsg{
+  margin-top: 10px;
   font-weight: 700;
   font-size: 14px;
-  line-height: 1.5;
+  line-height: 1.3;
   text-align: center;
-  width: 260px;          
+
+  width: 260px;
   margin-left: 50%;
   transform: translateX(-50%);
+
   color: white;
+
+  position: relative;
+  z-index: 100001;  /* above the bar */
 }
 
 /* ===== STORY PAGES (3+) ===== */
@@ -614,9 +620,10 @@ const progressMilestones = [
   { p: 670, msg: "You seriously thought I'd put something special at 67? Well you probably didn't think that but I did anyway :p" },
   { p: 700, msg: "I'm glad you kept pressing, that means you thought this whole thing wasn't just a 67 joke." },
   { p: 800, msg: "Are you seriously trying to reach 1000?" },
-  { p: 900, msg: "You're at 900 now, that means youve pressed that same damn button a whopping 180 times. It also means that you've spawned 180 pictures of us :)" },
+  { p: 900, msg: "You're at 900 now, that means you've pressed that same pink button 180 times. It also means that you've spawned 180 pictures of us :)" },
   { p: 1000, msg: "Good job you got to 1000. Happy now? Did that fuel your dopamine?" },
   { p: 1005, msg: "Well if it didn't then I hope this will ↓" }
+  { p: 1010, msg: "I pinky promise this is the last bit of text, you can move on now" }
 ];
 
 let lastMilestoneIndex = -1;
