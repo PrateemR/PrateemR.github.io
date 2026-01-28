@@ -11,33 +11,30 @@
       --accent: #ff4d6d;
     }
 
-    body{
-      margin:0;
-      height:100vh;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      font-family: Arial, sans-serif;
-      text-align:center;
-      color:white;
-      background: var(--bg-error);
-      transition: background 0.5s;
-      overflow:hidden;
-    }
+   body{
+  margin:0;
+  font-family: Arial, sans-serif;
+  text-align:center;
+  color:white;
+  background: var(--bg-error);
+  transition: background 0.5s;
+  overflow:hidden;
+}
 
-    .screen{
-      display:none;
-      width:100%;
-      height:100%;
-      padding:24px;
-      box-sizing:border-box;
-      align-items:center;
-      justify-content:center;
-      flex-direction:column;
-      gap:10px;
-    }
+/* screens must be full-screen layers */
+.screen{
+  position: fixed;
+  inset: 0;
+  display: none;
+  padding: 24px;
+  box-sizing: border-box;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 10px;
+}
 
-    .active{ display:flex; }
+.active{ display:flex; }
 
     /* Page 1 */
     .error-img{
@@ -132,6 +129,17 @@
   z-index: 1;
   pointer-events: none;
 }
+    
+#thinkTimer{
+  position: fixed;
+  z-index: 9999999;
+  font-weight: 1000;
+  font-size: 48px;
+  padding: 10px 14px;
+  border-radius: 16px;
+  background: rgba(0,0,0,0.65);
+  color: white;
+}
 
 /* button + gif stay on top and must never be covered */
 #centerUI{
@@ -190,61 +198,57 @@
   box-shadow: 0 10px 25px rgba(0,0,0,0.18);
 }
 
-/* Progress bar wrapper (centered, ~50% wider than gif) */
 #progressWrap{
+  width: 260px;
+  display:flex;
+  flex-direction: column;
+  align-items:center;
+  gap: 12px;
+}
+
+#progressBubble{
   position: relative;
-  width: 240px;          /* gif is 160px; this is 50% longer */
-  padding-top: 18px;   /* reserves space for the bar */
-  height: auto;        /* allow wrap to grow */
-  border-radius: 999px;
-  overflow: visible;     /* lets it grow beyond 100% */
-  background: rgba(255,255,255,0.25);
-  margin-top: -4px;
-}
-
-/* Progress fill — should overlap images */
-#progressBar{
-  position: absolute;
-  left: 0;
-  top: 0;
+  width: 240px;      /* bubble size NEVER changes */
   height: 18px;
-  width: 0%;
   border-radius: 999px;
-  background: #00c853;   /* green */
-  z-index: 99999;        /* above photos */
+  background: rgba(255,255,255,0.25);
+  overflow: hidden;
 }
 
-/* Percent text centered on the bar */
+#progressBar{
+  position:absolute;
+  left:0;
+  top:0;
+  height:100%;
+  width:0%;
+  border-radius:999px;
+  background:#00c853;
+}
+
 #progressText{
-  position: absolute;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 0.85rem;
-  color: white;
-  z-index: 100000;       /* above the bar */
-  user-select: none;
+  position:absolute;
+  inset:0;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:0.85rem;
+  color:white;
+  user-select:none;
 }
 
 #progressMsg{
-  position: relative;
-  top: 24px;          /* pushes it down below the bar */
-  margin-top: 12px;
-  font-weight: 700;
-  font-size: 16px;
-  line-height: 1.25;
-  max-width: 520px;
-  text-align: center;
-  color: white;
+  font-weight:700;
+  font-size:14px;
+  line-height:1.3;
+  color:white;
+  text-align:center;
+  width: 260px;
 }
 
 /* ===== STORY PAGES (3+) ===== */
 .storyPage{
   position: fixed;
   inset: 0;
-  width: 100vw;
-  height: 100vh;
   z-index: 200000;
   background: var(--bg-pink);
   display: flex;
@@ -266,14 +270,6 @@
   text-align: center;
   max-width: min(680px, 92vw);
   line-height: 1.35;
-}
-
-.storyGif{
-  width: 160px;
-  height: 160px;
-  object-fit: contain;
-  background: rgba(255,255,255,0.15);
-  border-radius: 18px;
 }
 
 /* black next button bottom-right */
@@ -469,25 +465,21 @@
   z-index: 5;
 }
 
-/* Big timer for "think" */
-#thinkTimer{
-  position: absolute;
-  font-weight: 1000;
-  font-size: 48px;
-  padding: 10px 14px;
-  border-radius: 16px;
-  background: rgba(0,0,0,0.65);
-  color: white;
-  z-index: 999999;
-}
 
-/* YES page styling */
 .yesGif{
-  width: 20vh;         /* ~20% of screen height */
+  width: 20vh;
   height: auto;
-  margin-bottom: 16px;
+  max-width: 220px;
 }
 
+.valPhoto{
+  width: min(520px, 88vw);
+  height: auto;
+  max-height: 52vh;
+  object-fit: contain;
+  border-radius: 18px;
+  background: rgba(255,255,255,0.15);
+}
 
 
 /* "No" sadness overlay + dullness */
@@ -497,16 +489,17 @@
   position: fixed;
   inset: 0;
   background: rgba(0,0,0,0);
-  pointer-events: none;
-  z-index: 1;
+  pointer-events:none;
+  z-index: 200001;
 }
 
 #rainLayer{
   position: fixed;
   inset: 0;
-  pointer-events: none;
-  z-index: 2;
+  pointer-events:none;
+  z-index: 200002;
 }
+
 
 
 /* simple raindrop */
@@ -524,13 +517,6 @@
   to   { transform: translateY(120vh); }
 }
   
-.valPhoto{
-  width: min(800px, 90vw);
-  height: min(520px, 55vh);
-  object-fit: contain;     /* THIS prevents cropping */
-  border-radius: 18px;
-  background: rgba(255,255,255,0.15);
-}
 
   </style>
 </head>
@@ -576,12 +562,14 @@
 
     <!-- GIF SPACE: replace the src later -->
     <img id="miniGif" src="capy1.gif" alt="capybara gif" />
-    <div id="progressWrap">
-  <div id="progressBar"></div>
-  <div id="progressText">0%</div>
+ <div id="progressWrap">
+  <div id="progressBubble">
+    <div id="progressBar"></div>
+    <div id="progressText">0%</div>
+  </div>
   <div id="progressMsg"></div>
 </div>
-  </div>
+
 
   <audio id="music" loop>
     <source src="song.mp3" type="audio/mpeg">
@@ -733,12 +721,11 @@
 <!-- PAGE 15 (YES) -->
 <div id="page15" class="storyPage" style="display:none;">
   <div class="storyCenter">
-    <img class="yesGif" src="capy_yes.gif" alt="yay gif">
+    
+  <img class="yesGif" src="capy_yes.gif" alt="">
+<img id="valPhoto" class="valPhoto" src="placeholder.jpg" alt="">
+<div class="storyText">Thank you for saying yes. I love you Anita.</div>
 
-    <img id="valPhoto" class="valPhoto" src="placeholder.jpg" alt="photo">
-
-
-    <div class="storyText">Thank you for saying yes. I love you Anita</div>
   </div>
 
   <button class="backBtn" id="back15">Back</button>
@@ -972,7 +959,7 @@ clickCounter.textContent = `Clicks: ${clickCount}`;
 progressText.textContent = `${clickCount}%`;
 
 // width grows forever (will spill off the bar once >100%)
-progressBar.style.width = `${clickCount}%`;
+progressBar.style.width = `${Math.min(clickCount, 100)}%`;
 
 // color: green -> red as it exceeds 100 (clamps at pure red)
 progressBar.style.background = progressColorFor(clickCount);
