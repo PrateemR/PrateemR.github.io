@@ -858,20 +858,24 @@ function resetGame12() {
   startRound();
 }
 
-// Click = score + teleport + reduce start time + restart instantly
+let extraPenaltySec = 0; // put this once near your other game variables
+
 targetBtn.addEventListener("click", () => {
   if (!gameActive) return;
 
   score += 10;
   scoreEl.textContent = score;
 
-// Reduce the next start time
-startTimeSec = Math.max(minStartTimeSec, startTimeSec * decayFactor);
+  // Base decay
+  startTimeSec = startTimeSec * decayFactor;
 
-// After score reaches 150, make it harder each click
-if (score >= 150) {
-  startTimeSec = Math.max(minStartTimeSec, startTimeSec - 0.1);
-}
+  // After 150 points, stack extra difficulty
+  if (score >= 150) {
+    extraPenaltySec += 0.1;
+  }
+
+  // Apply and clamp
+  startTimeSec = Math.max(minStartTimeSec, startTimeSec - extraPenaltySec);
 
   // Restart instantly
   startRound();
