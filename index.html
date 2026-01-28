@@ -260,9 +260,17 @@
 
 
 .storyCenter{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+
   width: 100%;
   max-width: 900px;
   margin: 0 auto;
+  padding: 24px;
+  box-sizing: border-box;
 }
 
 
@@ -299,7 +307,6 @@
   font-size: 0.95rem;
   cursor: pointer;
 }
-#page12 { position: relative; } /* so the overlays anchor properly */
 
 #gameTimer{
   position: absolute;
@@ -483,9 +490,12 @@
   background: rgba(255,255,255,0.15);
 }
 
+#page12, #page14{
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+}
 
-/* "No" sadness overlay + dullness */
-#page14{ position: relative; overflow: hidden; }
 
 #noOverlay{
   position: fixed;
@@ -1238,23 +1248,21 @@ function ensureNoAbsolute(){
 function moveNoRandom(){
   const pad = 20;
 
-  // get real size AFTER scaling
   const rect = noBtn.getBoundingClientRect();
   const btnW = rect.width;
   const btnH = rect.height;
 
-  const maxX = Math.max(pad, window.innerWidth - btnW - pad);
-  const maxY = Math.max(pad, window.innerHeight - btnH - pad);
+  const maxX = window.innerWidth - btnW - pad;
+  const maxY = window.innerHeight - btnH - pad;
 
-  const x = randBetween(pad, maxX);
-  const y = randBetween(pad, maxY);
+  const x = randBetween(pad, Math.max(pad, maxX));
+  const y = randBetween(pad, Math.max(pad, maxY));
 
   noBtn.style.left = `${x}px`;
-  noBtn.style.top = `${y}px`;
-
-  // always above everything
+  noBtn.style.top  = `${y}px`;
   noBtn.style.zIndex = 9999999;
 }
+
 
 
 function addRainDrops(count){
