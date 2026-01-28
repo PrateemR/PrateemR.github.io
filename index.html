@@ -228,40 +228,37 @@
 }
 
 #progressMsg{
-  margin-top: 10px;
-  font-weight: 700;
-  font-size: 14px;
-  line-height: 1.3;
-  text-align: center;
-
-  width: 260px;
-  margin-left: 50%;
-  transform: translateX(-50%);
-
-  color: white;
-
   position: relative;
-  z-index: 100001;  /* above the bar */
+  top: 24px;          /* pushes it down below the bar */
+  margin-top: 12px;
+  font-weight: 700;
+  font-size: 16px;
+  line-height: 1.25;
+  max-width: 520px;
+  text-align: center;
+  color: white;
 }
 
 /* ===== STORY PAGES (3+) ===== */
 .storyPage{
-  position: absolute;
+  position: fixed;
   inset: 0;
-  z-index: 200000;     /* above photos + progress bar */
+  width: 100vw;
+  height: 100vh;
+  z-index: 200000;
   background: var(--bg-pink);
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
+
 .storyCenter{
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 16px;
-  padding: 24px;
+  width: 100%;
+  max-width: 900px;
+  margin: 0 auto;
 }
+
 
 .storyText{
   color: white;
@@ -367,15 +364,7 @@
   width: 300px !important;   /* adjust size here */
   height: auto !important;
   max-width: 90%;
-}
-#progressMsg{
-  margin-top: 10px;
-  font-weight: 700;
-  font-size: 16px;
-  line-height: 1.25;
-  max-width: 520px;
-  text-align: center;
-}
+
 
 .muteBtn{
   position: fixed;
@@ -439,9 +428,10 @@
   justify-content: center;
   align-items: center;
   margin-bottom: 14px;
-  position: relative;
+  position: static;   /* IMPORTANT: stop being a positioning parent */
   z-index: 5;
 }
+
 
 .valBtn{
   padding: 14px 22px;
@@ -497,29 +487,13 @@
   margin-bottom: 16px;
 }
 
-.photoFrame{
-  width: min(360px, 75vw);
-  height: min(360px, 75vw);
-  border: 8px solid hotpink;
-  border-radius: 22px;
-  padding: 10px;
-  background: rgba(255,255,255,0.25);
-  box-sizing: border-box;
-  margin: 10px 0 16px;
-}
 
-.photoFrame img{
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  border-radius: 16px;
-}
 
 /* "No" sadness overlay + dullness */
 #page14{ position: relative; overflow: hidden; }
 
 #noOverlay{
-  position: absolute;
+  position: fixed;
   inset: 0;
   background: rgba(0,0,0,0);
   pointer-events: none;
@@ -527,11 +501,12 @@
 }
 
 #rainLayer{
-  position: absolute;
+  position: fixed;
   inset: 0;
   pointer-events: none;
   z-index: 2;
 }
+
 
 /* simple raindrop */
 .rainDrop{
@@ -546,6 +521,14 @@
 @keyframes rainFall{
   from { transform: translateY(0); }
   to   { transform: translateY(120vh); }
+}
+  
+.valPhoto{
+  width: min(800px, 90vw);
+  height: min(520px, 55vh);
+  object-fit: contain;     /* THIS prevents cropping */
+  border-radius: 18px;
+  background: rgba(255,255,255,0.15);
 }
 
   </style>
@@ -751,10 +734,8 @@
   <div class="storyCenter">
     <img class="yesGif" src="capy_yes.gif" alt="yay gif">
 
-    <div class="photoFrame">
-      <!-- placeholder image -->
-      <img id="valPhoto" src="placeholder.jpg" alt="placeholder">
-    </div>
+    <img id="valPhoto" class="valPhoto" src="placeholder.jpg" alt="photo">
+
 
     <div class="storyText">Thank you for saying yes. I love you Anita</div>
   </div>
@@ -1257,28 +1238,32 @@ document.getElementById("back15").addEventListener("click", () => {
 
 /* ===== NO ===== */
 function ensureNoAbsolute(){
-  if (getComputedStyle(noBtn).position !== "absolute") {
-    noBtn.style.position = "absolute";
+  if (getComputedStyle(noBtn).position !== "fixed") {
+    noBtn.style.position = "fixed";  // fixed = whole screen
   }
 }
 
 function moveNoRandom(){
-  const rect = page14.getBoundingClientRect();
-
-  // keep it on screen (with padding)
   const pad = 20;
-  const btnW = noBtn.offsetWidth || 80;
-  const btnH = noBtn.offsetHeight || 40;
 
-  const x = randBetween(pad, rect.width - btnW - pad);
-  const y = randBetween(pad + 90, rect.height - btnH - pad); // avoid top text area a bit
+  // get real size AFTER scaling
+  const rect = noBtn.getBoundingClientRect();
+  const btnW = rect.width;
+  const btnH = rect.height;
+
+  const maxX = Math.max(pad, window.innerWidth - btnW - pad);
+  const maxY = Math.max(pad, window.innerHeight - btnH - pad);
+
+  const x = randBetween(pad, maxX);
+  const y = randBetween(pad, maxY);
 
   noBtn.style.left = `${x}px`;
   noBtn.style.top = `${y}px`;
 
-  // ensure it's above anything it overlaps
-  noBtn.style.zIndex = 999999;
+  // always above everything
+  noBtn.style.zIndex = 9999999;
 }
+
 
 function addRainDrops(count){
   for (let i = 0; i < count; i++){
@@ -1331,10 +1316,11 @@ function resetNoEffects(){
   yesBtn.style.transform = "scale(1)";
   noBtn.style.transform = "scale(1)";
 
-  noBtn.style.position = "relative";
-  noBtn.style.left = "";
-  noBtn.style.top = "";
-  noBtn.style.zIndex = "";
+noBtn.style.position = "";
+noBtn.style.left = "";
+noBtn.style.top = "";
+noBtn.style.zIndex = "";
+
 
   noOverlay.style.background = "rgba(0,0,0,0)";
   page14.style.filter = ""; // remove dull filter
