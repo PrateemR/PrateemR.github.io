@@ -225,6 +225,19 @@
   z-index: 100000;       /* above the bar */
   user-select: none;
 }
+
+   #progressMsg{
+  margin-top: 10px;
+  font-weight: 700;
+  font-size: 14px;
+  line-height: 1.25;
+  text-align: center;
+  width: 260px;          
+  margin-left: 50%;
+  transform: translateX(-50%);
+  color: white;
+}
+
 /* ===== STORY PAGES (3+) ===== */
 .storyPage{
   position: absolute;
@@ -342,10 +355,83 @@
   font-size: 18px;
   font-weight: 700;
 }
+    
+<div id="ytModal" class="ytModal" style="display:none;">
+  <div class="ytBox">
+    <button id="closeYt" class="ytClose">×</button>
+    <div class="ytTitle">Ok. You earned this 😭</div>
+    <iframe
+      id="ytFrame"
+      width="560"
+      height="315"
+      src=""
+      title="YouTube video"
+      frameborder="0"
+      allow="autoplay; encrypted-media"
+      allowfullscreen>
+    </iframe>
+  </div>
+</div>
+
 .storyGif{
   width: 300px !important;   /* adjust size here */
   height: auto !important;
   max-width: 90%;
+}
+#progressMsg{
+  margin-top: 10px;
+  font-weight: 700;
+  font-size: 16px;
+  line-height: 1.25;
+  max-width: 520px;
+  text-align: center;
+}
+
+.muteBtn{
+  position: fixed;
+  left: 18px;
+  bottom: 18px;
+  z-index: 9999;
+  padding: 10px 14px;
+  border-radius: 14px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+/* YouTube modal */
+.ytModal{
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.65);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 99999;
+}
+
+.ytBox{
+  width: min(900px, 92vw);
+  background: white;
+  border-radius: 18px;
+  padding: 14px;
+  position: relative;
+}
+
+.ytTitle{
+  font-weight: 900;
+  margin: 6px 0 10px;
+  font-size: 18px;
+}
+
+.ytClose{
+  position: absolute;
+  right: 10px;
+  top: 8px;
+  font-size: 24px;
+  font-weight: 900;
+  background: transparent;
+  border: none;
+  cursor: pointer;
 }
 
   </style>
@@ -374,6 +460,9 @@
 
   <!-- PAGE 2: PINK VALENTINE PAGE -->
 <div id="mainSite" class="screen">
+
+  <button id="muteBtn" class="muteBtn">Mute 🔇</button>
+
   <!-- This layer is where the random photos will appear -->
   <div id="photoLayer"></div>
 
@@ -390,6 +479,7 @@
     <div id="progressWrap">
   <div id="progressBar"></div>
   <div id="progressText">0%</div>
+  <div id="progressMsg"></div>
 </div>
   </div>
 
@@ -511,6 +601,41 @@
 
 
   <script>
+
+const progressMilestones = [
+  { p: 200, msg: "Why are you still pressing the button?" },
+  { p: 250, msg: "HEY stop!" },
+  { p: 350, msg: "Do you think theres some sort of secret that'll appear if you keep pressing it?" },
+  { p: 500, msg: "Good job you hit 500, your reward is absoluetly nothing because THERE'S NO POINT OF PRESSING THE BUTTON PAST 100%" },
+  { p: 600, msg: "Okay FINE, keep pressing it.... if you want" },
+  { p: 670, msg: "You seriously thought I'd put something special at 67? Well you probably didn't think that but I did anyway :p" },
+  { p: 700, msg: "I'm glad you kept pressing, that means you thought this whole thing wasn't jsut a 67 joke" },
+  { p: 800, msg: "Are you seriously trying to reach 1000?" },
+  { p: 900, msg: "You're at 900 now, that means youve pressed that same damn button a whopping 180 times. It also means that you've spawned 180 pictures of us :)" },
+  { p: 1000, msg: "Good job you got to 1000. Happy now? Did that fuel your dopamine?" },
+  { p: 1005, msg: "Well if it didn't then I hope this will ↓" }
+];
+
+let lastMilestoneIndex = -1;
+const progressMsgEl = document.getElementById("progressMsg");
+
+  function checkProgressMilestones() {
+  let newIndex = lastMilestoneIndex;
+
+  for (let i = 0; i < progressMilestones.length; i++) {
+    if (clickCount >= progressMilestones[i].p) newIndex = i;
+  }
+
+  if (newIndex !== lastMilestoneIndex && newIndex !== -1) {
+    lastMilestoneIndex = newIndex;
+    progressMsgEl.textContent = progressMilestones[newIndex].msg;
+
+    if (progressMilestones[newIndex].p === 1005) {
+      openYoutubeReward();
+    }
+  }
+}
+
     const correctPassword = "capybara";
 
     const lockScreen = document.getElementById("lockScreen");
@@ -546,6 +671,10 @@ document.getElementById("continueBtn").addEventListener("click", unlock);
     pw.addEventListener("keydown", (e) => {
       if (e.key === "Enter") unlock();
     });
+function openYoutubeReward() {
+  // Opens the video in a new tab (simple + reliable)
+  window.open("https://www.youtube.com/watch?v=kYcQ3M5Z6TQ", "_blank");
+}
 
 // ===== PAGE 2: Surprise button spawns random photos =====
 
@@ -656,7 +785,8 @@ function progressColorFor(pct){
 
 function spawnPhoto() {
   if (!photos.length) return;
-  clickCount += 10;
+  clickCount += (clickCount >= 1000 ? 1 : 5);
+
 
 // counter
 clickCounter.textContent = `Clicks: ${clickCount}`;
@@ -669,6 +799,9 @@ progressBar.style.width = `${clickCount}%`;
 
 // color: green -> red as it exceeds 100 (clamps at pure red)
 progressBar.style.background = progressColorFor(clickCount);
+
+
+  checkProgressMilestones();
 
 // show the move-on button at 100 clicks
 if (clickCount >= 100) {
@@ -841,7 +974,8 @@ function startRound() {
 function resetGame12() {
   score = 0;
   scoreEl.textContent = score;
-  startTimeSec = 10.0;              // initial round time
+  startTimeSec = 10.0; // initial round time
+  extraPenaltySec = 0;  
   timerEl.textContent = formatTime(startTimeSec);
   gameMsg.textContent = "Get ready…";
   next12.style.display = "none";
