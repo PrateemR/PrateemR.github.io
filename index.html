@@ -601,6 +601,22 @@
 
 
   <script>
+const muteBtn = document.getElementById("muteBtn");
+
+if (muteBtn && music) {
+  muteBtn.addEventListener("click", () => {
+    music.muted = !music.muted;
+
+    // optional: also pause/play so it feels instant
+    if (music.muted) {
+      music.pause();
+      muteBtn.textContent = "Unmute 🔊";
+    } else {
+      music.play().catch(() => {});
+      muteBtn.textContent = "Mute 🔇";
+    }
+  });
+}
 
 const progressMilestones = [
   { p: 200, msg: "Why are you still pressing the button?" },
@@ -895,7 +911,7 @@ let startTimeSec = 10.0;
 const decayFactor = 2 / 3;
 
 // Don’t let it get impossible
-const minStartTimeSec = 1.25;
+const minStartTimeSec = 0.25;
 
 let roundStartMs = 0;
 let rafId = null;
